@@ -42,12 +42,17 @@ window.extractJobDetails = function() {
             postedTime = new Date();
         }
 
+        // Get matched skills
+        const matchedSkills = Array.from(document.querySelectorAll('.job-details-how-you-match__skills-item-subtitle'))
+            .map(el => el.textContent.trim())
+            .filter(text => text.length > 0);
+
         const jobDetails = {
             basicInfo: {
                 title: utils.getTextContent('h1.job-details-jobs-unified-top-card__job-title') || 'Not specified',
                 company: utils.getTextContent('.job-details-jobs-unified-top-card__company-name'),
                 location: utils.getTextContent('.job-details-jobs-unified-top-card__primary-description-container .tvm__text'),
-                postedTime: postedTime.toISOString(), // Now properly formatted as ISO timestamp
+                postedTime: postedTime.toISOString(),
                 applicants: applicantsCount,
                 workplaceType: utils.getTextContent('.ui-label span'),
                 jobId: utils.extractJobId()
@@ -62,7 +67,8 @@ window.extractJobDetails = function() {
                 technologies: utils.getTechnologies(utils.getAllListItems('.jobs-description__content ul'))
             },
             skillsAndRequirements: {
-                matched: Array.from(document.querySelectorAll('.job-details-how-you-match__skills-item-subtitle'))
+                matched: matchedSkills,
+                required: Array.from(document.querySelectorAll('.description__job-criteria-text'))
                     .map(el => el.textContent.trim())
                     .filter(text => text.length > 0)
             },
@@ -74,7 +80,9 @@ window.extractJobDetails = function() {
             }
         };
 
-        return utils.cleanObject(jobDetails);
+        const cleanedDetails = utils.cleanObject(jobDetails);
+        console.log('Job details being returned:', JSON.stringify(cleanedDetails, null, 2));
+        return cleanedDetails;
     } catch (error) {
         console.error('Error extracting job details:', error);
         throw new Error(`Failed to extract job details: ${error.message}`);

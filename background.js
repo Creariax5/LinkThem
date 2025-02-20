@@ -1,6 +1,6 @@
 const API_URL = 'https://link-them-api.vercel.app/api/v1/jobs';
 const MAX_RETRIES = 3;
-const TIMEOUT = 3000; // 30 seconds
+const TIMEOUT = 3000; // 3 seconds
 
 async function makeRequest(data, retryCount = 0) {
     const controller = new AbortController();
@@ -8,7 +8,7 @@ async function makeRequest(data, retryCount = 0) {
 
     try {
         console.log('Making request to API:', API_URL);
-        console.log('Request data:', data);
+        console.log('Request data:', JSON.stringify(data, null, 2));
         
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -23,7 +23,9 @@ async function makeRequest(data, retryCount = 0) {
         clearTimeout(timeoutId);
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
         }
 
         const result = await response.json();
@@ -34,14 +36,12 @@ async function makeRequest(data, retryCount = 0) {
         clearTimeout(timeoutId);
         console.error('API Request error:', error);
 
-        // Handle different types of errors
         if (error.name === 'AbortError') {
             return { success: false, error: 'Request timed out. Please try again.' };
         }
 
         if (retryCount < MAX_RETRIES) {
             console.log(`Retrying request (${retryCount + 1}/${MAX_RETRIES})...`);
-            // Exponential backoff
             await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
             return makeRequest(data, retryCount + 1);
         }
