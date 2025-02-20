@@ -1,14 +1,35 @@
 const API_URL = 'https://link-them-api.vercel.app/api/v1/jobs';
 const MAX_RETRIES = 3;
-const TIMEOUT = 3000; // 3 seconds
+const TIMEOUT = 3000;
 
 async function makeRequest(data, retryCount = 0) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
     try {
+        // Add default skillsAndRequirements if missing
+        const processedData = {
+            ...data,
+            skillsAndRequirements: {
+                matched: [],
+                required: []
+            }
+        };
+
+        // If skills data exists in the original data, use it instead of defaults
+        if (data.skillsAndRequirements) {
+            processedData.skillsAndRequirements = {
+                matched: Array.isArray(data.skillsAndRequirements.matched) 
+                    ? data.skillsAndRequirements.matched 
+                    : [],
+                required: Array.isArray(data.skillsAndRequirements.required)
+                    ? data.skillsAndRequirements.required
+                    : []
+            };
+        }
+
         console.log('Making request to API:', API_URL);
-        console.log('Request data:', JSON.stringify(data, null, 2));
+        console.log('Final request payload:', JSON.stringify(processedData, null, 2));
         
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -16,7 +37,7 @@ async function makeRequest(data, retryCount = 0) {
                 'Content-Type': 'application/json',
                 'X-Retry-Count': retryCount.toString()
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(processedData),
             signal: controller.signal
         });
 
@@ -70,6 +91,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 });
             });
 
-        return true; // Keep the message channel open
+        return true;
     }
 });
