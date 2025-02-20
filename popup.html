@@ -3,12 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedinSrcap</title>
+    <title>LinkedinScrap</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 15px;
+        }
+        #extractBtn {
+            width: 100%;
+            padding: 10px;
+            background-color: #0077b5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #extractBtn:hover {
+            background-color: #006097;
+        }
+    </style>
 </head>
 <body>
-    <p>I am scraping</p>
+    <p>Click the button below to extract job details</p>
     <button id="extractBtn">Download Job Details</button>
 
-    <script src="job-scraper.js"></script>
+    <script type="module" src="popup.js"></script>
 </body>
 </html>

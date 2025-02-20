@@ -2,17 +2,29 @@
     "manifest_version": 3,
     "name": "LinkedinScrap",
     "version": "1.0.0",
-    "description": "Srap your linkedin to get all infos you need",
+    "description": "Scrape your LinkedIn job details",
     "permissions": [
         "storage",
         "activeTab",
         "scripting",
         "downloads"
     ],
+    "host_permissions": [
+        "https://link-them-api.vercel.app/*",
+        "https://localhost:3000/*"
+    ],
+    "web_accessible_resources": [{
+        "resources": ["scraper.js", "utils.js"],
+        "matches": ["https://*.linkedin.com/*"]
+    }],
     "action": {
         "default_popup": "popup.html"
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
     }
 }
