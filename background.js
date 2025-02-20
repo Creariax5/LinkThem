@@ -1,4 +1,4 @@
-const API_URL = 'https://localhost:3000/api/v1/jobs';
+const API_URL = 'https://link-them-api.vercel.app/api/v1/jobs';
 const MAX_RETRIES = 3;
 const TIMEOUT = 3000; // 30 seconds
 

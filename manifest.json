@@ -10,8 +10,7 @@
         "downloads"
     ],
     "host_permissions": [
-        "https://link-them-api.vercel.app/*",
-        "https://localhost:3000/*"
+        "https://link-them-api.vercel.app/*"
     ],
     "web_accessible_resources": [{
         "resources": ["scraper.js", "utils.js"],
